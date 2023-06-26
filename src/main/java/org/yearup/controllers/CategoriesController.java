@@ -39,16 +39,12 @@ public class CategoriesController
     // add the appropriate annotation for a get action
    @GetMapping(" ")
    @PreAuthorize("permitAll()")
-    public List<Category> getAll(@RequestParam(name = "category_id", required = false) int category_id,
-                                 @RequestParam(name = "name", required = false) String name,
-                                 @RequestParam(name = "description", required = false) String description)
+    public List<Category> getAll()
+   {
 
-
-    {
-
-
-        return categoryDao.getAllCategories(category_id,name,description);
+        return categoryDao.getAllCategories();
     }
+
 
     @GetMapping("{id}")
     @PreAuthorize("permitAll()")

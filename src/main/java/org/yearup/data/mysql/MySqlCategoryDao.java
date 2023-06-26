@@ -14,20 +14,19 @@ import java.util.List;
 @Component
 public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
 {
-    private DataSource dataSource;
     public MySqlCategoryDao(DataSource dataSource)
     {
         super(dataSource);
     }
 
     @Override
-    public List<Category> getAllCategories(int category_id, String name, String description)
+    public List<Category> getAllCategories()
     {
         List<Category> categories = new ArrayList<>();
         String query = "Select * from categories;";
 
 
-        try (Connection connection = dataSource.getConnection();
+        try (Connection connection = getConnection();
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(query)) {
 
