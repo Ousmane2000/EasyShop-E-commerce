@@ -139,10 +139,10 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao
 
                 if (generatedKeys.next()) {
                     // Retrieve the auto-incremented ID
-                    int orderId = generatedKeys.getInt(1);
+                    int categoryId = generatedKeys.getInt(1);
 
                     // get the newly inserted category
-                    return getById(orderId);
+                    return getById(categoryId);
                 }
             }
         }
