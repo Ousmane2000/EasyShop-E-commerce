@@ -35,16 +35,15 @@ public class CategoriesController
    @PreAuthorize("permitAll()")
     public List<Category> getAll()
    {
-        return categoryDao.getAllCategories();
+       return categoryDao.getAllCategories();
     }
 
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     @PreAuthorize("permitAll()")
     public Category getById(@PathVariable int id)
     {
-        try
-        {
+
             var category = categoryDao.getById(id);
 
             if(category == null)
@@ -52,11 +51,7 @@ public class CategoriesController
 
             return category;
         }
-        catch(Exception ex)
-        {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
-        }
-    }
+
 
     // the url to return all products in category 1 would look like this
     // https://localhost:8080/categories/1/products
@@ -68,6 +63,7 @@ public class CategoriesController
     }
 
     @PostMapping()
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Category addCategory(@RequestBody Category category)
     {
@@ -97,6 +93,7 @@ public class CategoriesController
 
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void deleteCategory(@PathVariable int id)
     {

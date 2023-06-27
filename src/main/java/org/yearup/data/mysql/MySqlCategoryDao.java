@@ -23,15 +23,17 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
     public List<Category> getAllCategories()
     {
         List<Category> categories = new ArrayList<>();
-        String query = "Select * from categories;";
-
+        String sql = "SELECT * FROM categories";
 
         try (Connection connection = getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                Category category = mapRow(resultSet);
+                int categoryID = resultSet.getInt("category_id");
+                String categoryName = resultSet.getString("name");
+                String description = resultSet.getString("description");
+                Category category = new Category(categoryID,categoryName,description);
                 categories.add(category);
             }
         } catch (SQLException e) {
@@ -76,35 +78,33 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
         String sql = "INSERT INTO categories(category_id, name, description) " +
                 " VALUES (?, ?, ?);";
 
-        try (Connection connection = getConnection())
-        {
-            PreparedStatement statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setInt(1, category.getCategoryId());
             statement.setString(2,category.getName());
             statement.setString(3, category.getDescription());
 
+            int affectedRows = statement.executeUpdate();
 
-            int rowsAffected = statement.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Creating category failed, no rows affected.");
+            }
 
-            if (rowsAffected > 0) {
-                // Retrieve the generated keys
-                ResultSet generatedKeys = statement.getGeneratedKeys();
-
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    // Retrieve the auto-incremented ID
-                    int categoryId = generatedKeys.getInt(1);
-
-                    // get the newly inserted category
-                    return getById(categoryId);
+                    int generatedId = generatedKeys.getInt(1);
+                    category.setCategoryId(generatedId);
+                } else {
+                    throw new SQLException("Creating category failed, no ID obtained.");
                 }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        catch (SQLException e)
-        {
-            throw new RuntimeException(e);
-        }
-        return null;
+
+        return category;
     }
 
     @Override
