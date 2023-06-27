@@ -57,18 +57,16 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
 
             ResultSet row = statement.executeQuery();
 
-            while (row.next())
+            if (row.next())
             {
-                Category category = mapRow(row);
-                categories.add(category);
+                return mapRow(row);
             }
         }
         catch (SQLException e)
         {
             throw new RuntimeException(e);
         }
-
-        return (Category) categories;
+        return null;
     }
 
     @Override
@@ -95,10 +93,10 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
 
                 if (generatedKeys.next()) {
                     // Retrieve the auto-incremented ID
-                    int orderId = generatedKeys.getInt(1);
+                    int categoryId = generatedKeys.getInt(1);
 
                     // get the newly inserted category
-                    return getById(orderId);
+                    return getById(categoryId);
                 }
             }
         }

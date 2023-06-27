@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("categories")
+@RequestMapping("/categories")
 @CrossOrigin
 public class CategoriesController
 {
@@ -31,7 +31,7 @@ public class CategoriesController
 
 
     // add the appropriate annotation for a get action
-   @GetMapping(" ")
+   @GetMapping("")
    @PreAuthorize("permitAll()")
     public List<Category> getAll()
    {
@@ -39,7 +39,7 @@ public class CategoriesController
     }
 
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     @PreAuthorize("permitAll()")
     public Category getById(@PathVariable int id)
     {
